@@ -2,10 +2,21 @@
 Integer matrix manipulation in C++
 
 # Features
-* Matrix addition, subtraction, negation
-* Scalar and matrix multiplication
-* `<<` overloading for putting to ostream
-* Get entry at specified position using `mat[i][j]` or `mat.at(i, j)`
+ZMatrix supports basic matrix operations:
+* Addition (`+`)
+* Subtraction (`-`)
+* Unary negation (`-`)
+* Scalar multiplication (`*`)
+* Matrix multiplication (`*`)
+
+Other features:
+* Initialization using `std::initializer_list`s
+* Access specific entry (`mat[i][j]` / `mat.at(i, j)`)
+* `<<` overloading for putting to `std::ostream`
 
 # TODO
-* Implement a better matrix multiplication algorithm
+* Implement a more efficient matrix multiplication algorithm
+
+To compile the example, simply run
+```g++ demo.cpp```
+
