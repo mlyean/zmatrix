@@ -51,5 +51,8 @@ int main() {
     ZMatrix<double, 2, 2> doubles {1.1, -0.7, 0.4, 1.2};
     std::cout << doubles << std::endl;
 
+    // Check equality
+    std::cout << (mat == vec * rvec) << std::endl;
+
     return 0;
 }

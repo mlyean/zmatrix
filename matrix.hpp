@@ -6,8 +6,12 @@
 namespace matrix {
 
     /*
-     * Implementation of integer matrices - useful(?) for representing linear transformations involving only integers.
-     * Integer matrices are not closed under multiplicative inverse, hence this operation is not supported.
+     * class ZMatrix
+     * Implementation of integer matrices -
+     * useful(?) for representing linear transformations involving only integers.
+     *
+     * Integer matrices are not closed under multiplicative inverse,
+     * hence this operation is not supported.
      */
     template<typename T, size_t M, size_t N>
     class ZMatrix {
@@ -16,105 +20,156 @@ namespace matrix {
         const size_t sz;
 
     public:
-        template<typename U, size_t M2, size_t N2>
-        friend class ZMatrix;
+        ZMatrix();
 
-        ZMatrix(T* mat) : mat(mat), sz(M * N) {};
+        ZMatrix(T*);
 
-        ZMatrix() : mat(new T[M * N]), sz(M * N) {
-            for (size_t i = 0; i < M; i++) {
-                for (size_t j = 0; j < N; j++) {
-                    (*this)[i][j] = 0;
-                }
-            }
-        }
+        ZMatrix(std::initializer_list<T>);
 
-        ZMatrix(std::initializer_list<T> lst) : mat(new T[M * N]), sz(M * N) {
-            assert(lst.size() == sz);
-            std::copy(lst.begin(), lst.end(), mat);
-        }
+        ZMatrix(const ZMatrix<T, M, N>&);
 
-        ZMatrix(const ZMatrix<T, M, N>& a) : mat(new T[a.sz]), sz(a.sz) {
-            std::copy_n(a.mat, sz, mat);
-        }
+        ZMatrix(ZMatrix<T, M, N>&&);
 
-        ZMatrix(ZMatrix<T, M, N>&& a) : mat(a.mat), sz(a.sz) {
-            a.mat = nullptr;
-        }
+        ZMatrix<T, M, N>& operator=(const ZMatrix<T, M, N>& a);
 
-        ZMatrix<T, M, N>& operator=(const ZMatrix<T, M, N>& a) {
-            std::copy_n(a.mat, a.sz, mat);
-        }
+        ZMatrix<T, M, N>& operator=(ZMatrix<T, M, N>&& a);
 
-        ZMatrix<T, M, N>& operator=(ZMatrix<T, M, N>&& a) {
-            mat = a.mat;
-            a.mat = nullptr;
-        }
+        ~ZMatrix();
 
-        ~ZMatrix() {
-            delete[] mat;
-        }
+        T* operator[](size_t i);
 
-        T* operator[](size_t i) {
-            return &mat[i * N];
-        }
+        T at(size_t i, size_t j) const;
 
-        T at(size_t i, size_t j) const {
-            assert(i < M);
-            assert(j < N);
-            return mat[i * N + j];
-        }
+        size_t size();
 
-        size_t size() {
-            return sz;
-        }
+        std::pair<size_t, size_t> dim();
 
-        std::pair<size_t, size_t> dim() {
-            return {M, N};
-        }
+        ZMatrix<T, M, N> operator+(const ZMatrix<T, M, N>& a) const;
 
-        ZMatrix<T, M, N> operator+(const ZMatrix<T, M, N>& a) const {
-            T* sum = new T[sz];
-            std::transform(mat, mat + sz, a.mat, sum, std::plus<T>());
-            return sum;
-        }
+        ZMatrix<T, M, N> operator-(const ZMatrix<T, M, N>& a) const;
 
-        ZMatrix<T, M, N> operator-(const ZMatrix<T, M, N>& a) const {
-            T* diff = new T[sz];
-            std::transform(mat, mat + sz, a.mat, diff, std::minus<T>());
-            return diff;
-        }
+        ZMatrix<T, M, N> operator-() const;
 
-        ZMatrix<T, M, N> operator-() const {
-            T* neg = new T[sz];
-            std::transform(mat, mat + sz, neg, std::negate<T>());
-            return neg;
-        }
-
-        ZMatrix<T, M, N> operator*(T n) const {
-            T* prod = new T[sz];
-            std::transform(mat, mat + sz, prod, [n](T k) -> T { return n * k; });
-            return prod;
-        }
+        ZMatrix<T, M, N> operator*(T n) const;
 
         template<size_t P>
-        ZMatrix<T, M, P> operator*(const ZMatrix<T, N, P>& a) const {
-            T* prod = new T[M * P];
-            for (size_t i = 0; i < M; i++) {
-                for (size_t j = 0; j < P; j++) {
-                    T elem = 0;
+        ZMatrix<T, M, P> operator*(const ZMatrix<T, N, P>& a) const;
 
-                    for (size_t k = 0; k < N; k++) {
-                        elem += mat[i* N + k] * a.mat[k * P + j];
-                    }
+        template<typename U, size_t P, size_t Q>
+        friend class ZMatrix;
 
-                    prod[i * P + j] = elem;
-                }
-            }
-
-            return prod;
-        }
+        template <typename U, size_t P, size_t Q>
+        friend bool operator==(const ZMatrix<U, P, Q>& a, const ZMatrix<U, P, Q>& b);
     };
+
+    template <typename T, size_t M, size_t N>
+    ZMatrix<T, M, N>::ZMatrix(T* mat) : mat(mat), sz(M * N) {};
+
+    template <typename T, size_t M, size_t N>
+    ZMatrix<T, M, N>::ZMatrix() : mat(new T[M * N]), sz(M * N) {
+        for (size_t i = 0; i < M; i++) {
+            for (size_t j = 0; j < N; j++) {
+                (*this)[i][j] = 0;
+            }
+        }
+    }
+
+    template <typename T, size_t M, size_t N>
+    ZMatrix<T, M, N>::ZMatrix(std::initializer_list<T> lst) : mat(new T[M * N]), sz(M * N) {
+        assert(lst.size() == sz);
+        std::copy(lst.begin(), lst.end(), mat);
+    }
+
+    template <typename T, size_t M, size_t N>
+    ZMatrix<T, M, N>::ZMatrix(const ZMatrix<T, M, N>& a) : mat(new T[a.sz]), sz(a.sz) {
+        std::copy_n(a.mat, sz, mat);
+    }
+
+    template <typename T, size_t M, size_t N>
+    ZMatrix<T, M, N>::ZMatrix(ZMatrix<T, M, N>&& a) : mat(a.mat), sz(a.sz) {
+        a.mat = nullptr;
+    }
+
+    template <typename T, size_t M, size_t N>
+    ZMatrix<T, M, N>& ZMatrix<T, M, N>::operator=(const ZMatrix<T, M, N>& a) {
+        std::copy_n(a.mat, a.sz, mat);
+    }
+
+    template <typename T, size_t M, size_t N>
+    ZMatrix<T, M, N>& ZMatrix<T, M, N>::operator=(ZMatrix<T, M, N>&& a) {
+        mat = a.mat;
+        a.mat = nullptr;
+    }
+
+    template <typename T, size_t M, size_t N>
+    ZMatrix<T, M, N>::~ZMatrix() {
+        delete[] mat;
+    }
+
+    template <typename T, size_t M, size_t N>
+    size_t ZMatrix<T, M, N>::size() {
+        return sz;
+    }
+
+    template <typename T, size_t M, size_t N>
+    std::pair<size_t, size_t> ZMatrix<T, M, N>::dim() {
+        return {M, N};
+    }
+
+    template <typename T, size_t M, size_t N>
+    T ZMatrix<T, M, N>::at(size_t i, size_t j) const {
+        assert(i < M);
+        assert(j < N);
+        return mat[i * N + j];
+    }
+
+    template <typename T, size_t M, size_t N>
+    ZMatrix<T, M, N> ZMatrix<T, M, N>::operator+(const ZMatrix<T, M, N>& a) const {
+        T* sum = new T[sz];
+        std::transform(mat, mat + sz, a.mat, sum, std::plus<T>());
+        return sum;
+    }
+
+    template <typename T, size_t M, size_t N>
+    ZMatrix<T, M, N> ZMatrix<T, M, N>::operator-(const ZMatrix<T, M, N>& a) const {
+        T* diff = new T[sz];
+        std::transform(mat, mat + sz, a.mat, diff, std::minus<T>());
+        return diff;
+    }
+
+    template <typename T, size_t M, size_t N>
+    ZMatrix<T, M, N> ZMatrix<T, M, N>::operator-() const {
+        T* neg = new T[sz];
+        std::transform(mat, mat + sz, neg, std::negate<T>());
+        return neg;
+    }
+
+    template <typename T, size_t M, size_t N>
+    ZMatrix<T, M, N> ZMatrix<T, M, N>::operator*(T n) const {
+        T* prod = new T[sz];
+        std::transform(mat, mat + sz, prod, [n](T k) -> T { return n * k; });
+        return prod;
+    }
+
+    template <typename T, size_t M, size_t N>
+    template <size_t P>
+    ZMatrix<T, M, P> ZMatrix<T, M, N>::operator*(const ZMatrix<T, N, P>& a) const {
+        T* prod = new T[M * P];
+        for (size_t i = 0; i < M; i++) {
+            for (size_t j = 0; j < P; j++) {
+                T elem = 0;
+
+                for (size_t k = 0; k < N; k++) {
+                    elem += mat[i* N + k] * a.mat[k * P + j];
+                }
+
+                prod[i * P + j] = elem;
+            }
+        }
+
+        return prod;
+    }
+
 
     template<typename T, size_t M, size_t N>
     ZMatrix<T, M, N> operator*(T n, const ZMatrix<T, M, N>& a) {
@@ -131,6 +186,16 @@ namespace matrix {
             if (i != M - 1) os << '\n';
         }
         return os;
+    }
+
+    template <typename T, size_t M, size_t N>
+    bool operator==(const ZMatrix<T, M, N>& a, const ZMatrix<T, M, N>& b) {
+        return std::equal(a.mat, a.mat + a.sz, b.mat);
+    }
+
+    template <typename T, size_t M, size_t N>
+    bool operator!=(const ZMatrix<T, M, N>& a, const ZMatrix<T, M, N>& b) {
+        return !(a == b);
     }
 
     template<typename T, size_t N>
