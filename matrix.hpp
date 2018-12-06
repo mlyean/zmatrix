@@ -17,10 +17,12 @@ namespace matrix {
     class ZMatrix {
     private:
         T* mat;
-        const size_t sz;
+        const size_t sz = M * N;
 
     public:
         ZMatrix();
+
+        ZMatrix(T);
 
         ZMatrix(T*);
 
@@ -40,9 +42,9 @@ namespace matrix {
 
         T at(size_t i, size_t j) const;
 
-        size_t size();
+        size_t size() const;
 
-        std::pair<size_t, size_t> dim();
+        std::pair<size_t, size_t> dim() const;
 
         ZMatrix<T, M, N> operator+(const ZMatrix<T, M, N>& a) const;
 
@@ -63,30 +65,29 @@ namespace matrix {
     };
 
     template <typename T, size_t M, size_t N>
-    ZMatrix<T, M, N>::ZMatrix(T* mat) : mat(mat), sz(M * N) {};
+    ZMatrix<T, M, N>::ZMatrix() : ZMatrix(0) {}
 
     template <typename T, size_t M, size_t N>
-    ZMatrix<T, M, N>::ZMatrix() : mat(new T[M * N]), sz(M * N) {
-        for (size_t i = 0; i < M; i++) {
-            for (size_t j = 0; j < N; j++) {
-                (*this)[i][j] = 0;
-            }
-        }
+    ZMatrix<T, M, N>::ZMatrix(T n) : mat(new T[M * N]) {
+        std::fill(mat, mat + sz, n);
     }
 
     template <typename T, size_t M, size_t N>
-    ZMatrix<T, M, N>::ZMatrix(std::initializer_list<T> lst) : mat(new T[M * N]), sz(M * N) {
+    ZMatrix<T, M, N>::ZMatrix(T* mat) : mat(mat) {};
+
+    template <typename T, size_t M, size_t N>
+    ZMatrix<T, M, N>::ZMatrix(std::initializer_list<T> lst) : mat(new T[M * N]) {
         assert(lst.size() == sz);
         std::copy(lst.begin(), lst.end(), mat);
     }
 
     template <typename T, size_t M, size_t N>
-    ZMatrix<T, M, N>::ZMatrix(const ZMatrix<T, M, N>& a) : mat(new T[a.sz]), sz(a.sz) {
+    ZMatrix<T, M, N>::ZMatrix(const ZMatrix<T, M, N>& a) : mat(new T[a.sz]) {
         std::copy_n(a.mat, sz, mat);
     }
 
     template <typename T, size_t M, size_t N>
-    ZMatrix<T, M, N>::ZMatrix(ZMatrix<T, M, N>&& a) : mat(a.mat), sz(a.sz) {
+    ZMatrix<T, M, N>::ZMatrix(ZMatrix<T, M, N>&& a) : mat(a.mat) {
         a.mat = nullptr;
     }
 
@@ -107,12 +108,12 @@ namespace matrix {
     }
 
     template <typename T, size_t M, size_t N>
-    size_t ZMatrix<T, M, N>::size() {
+    size_t ZMatrix<T, M, N>::size() const {
         return sz;
     }
 
     template <typename T, size_t M, size_t N>
-    std::pair<size_t, size_t> ZMatrix<T, M, N>::dim() {
+    std::pair<size_t, size_t> ZMatrix<T, M, N>::dim() const {
         return {M, N};
     }
 

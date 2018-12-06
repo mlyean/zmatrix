@@ -26,6 +26,9 @@ int main() {
         1, 2, 3
     };
 
+    std::cout << "Size of mat: " << mat.size() << std::endl;
+    std::cout << "Dimensions of mat: " << mat.dim().first << 'x' << mat.dim().second << std::endl;
+
     // Get entry using ZMatrix::at(size_t, size_t)
     // Can also use mat[1][2] for non-const matrices
     std::cout << "mat[1][2]=" << mat.at(1, 2) << std::endl;
