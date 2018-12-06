@@ -1,5 +1,5 @@
 #include <iostream>
-#include "matrix.hpp"
+#include "src/zmatrix.hpp"
 
 // The matrices ZMatrix and IMatrix are declared in the namespace "matrix"
 // IMatrix is a specialization of ZMatrix
