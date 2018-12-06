@@ -32,9 +32,9 @@ namespace matrix {
 
         ZMatrix(ZMatrix<T, M, N>&&);
 
-        ZMatrix<T, M, N>& operator=(const ZMatrix<T, M, N>& a);
+        ZMatrix<T, M, N>& operator=(const ZMatrix<T, M, N>&);
 
-        ZMatrix<T, M, N>& operator=(ZMatrix<T, M, N>&& a);
+        ZMatrix<T, M, N>& operator=(ZMatrix<T, M, N>&&);
 
         ~ZMatrix();
 
@@ -46,22 +46,22 @@ namespace matrix {
 
         std::pair<size_t, size_t> dim() const;
 
-        ZMatrix<T, M, N> operator+(const ZMatrix<T, M, N>& a) const;
+        ZMatrix<T, M, N> operator+(const ZMatrix<T, M, N>&) const;
 
-        ZMatrix<T, M, N> operator-(const ZMatrix<T, M, N>& a) const;
+        ZMatrix<T, M, N> operator-(const ZMatrix<T, M, N>&) const;
 
         ZMatrix<T, M, N> operator-() const;
 
-        ZMatrix<T, M, N> operator*(T n) const;
+        ZMatrix<T, M, N> operator*(T) const;
 
         template<size_t P>
-        ZMatrix<T, M, P> operator*(const ZMatrix<T, N, P>& a) const;
+        ZMatrix<T, M, P> operator*(const ZMatrix<T, N, P>&) const;
 
         template<typename U, size_t P, size_t Q>
         friend class ZMatrix;
 
         template <typename U, size_t P, size_t Q>
-        friend bool operator==(const ZMatrix<U, P, Q>& a, const ZMatrix<U, P, Q>& b);
+        friend bool operator==(const ZMatrix<U, P, Q>&, const ZMatrix<U, P, Q>&);
     };
 
     template <typename T, size_t M, size_t N>
@@ -93,13 +93,15 @@ namespace matrix {
 
     template <typename T, size_t M, size_t N>
     ZMatrix<T, M, N>& ZMatrix<T, M, N>::operator=(const ZMatrix<T, M, N>& a) {
-        std::copy_n(a.mat, a.sz, mat);
+        std::copy_n(a.mat, sz, mat);
+        return *this;
     }
 
     template <typename T, size_t M, size_t N>
     ZMatrix<T, M, N>& ZMatrix<T, M, N>::operator=(ZMatrix<T, M, N>&& a) {
         mat = a.mat;
         a.mat = nullptr;
+        return *this;
     }
 
     template <typename T, size_t M, size_t N>
