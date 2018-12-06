@@ -1,7 +1,7 @@
 # zmatrix
 Integer matrix manipulation in C++
 
-# Features
+## Features
 ZMatrix supports basic matrix operations:
 * Addition (`+`)
 * Subtraction (`-`)
@@ -9,14 +9,16 @@ ZMatrix supports basic matrix operations:
 * Scalar multiplication (`*`)
 * Matrix multiplication (`*`)
 
+Note that inverses are not supported, since integer matrices are not closed under that operation.
+
 Other features:
-* Initialization using `std::initializer_list`s
+* Initialization using fill constructors and `std::initializer_list`s
 * Access specific entry (`mat[i][j]` / `mat.at(i, j)`)
 * `<<` overloading for putting to `std::ostream`
 
-# TODO
-* Implement a more efficient matrix multiplication algorithm
+## Examples
+`demo.cpp` provides some example use cases. To compile it, simply run `g++ demo.cpp`.
 
-To compile the example, simply run
-```g++ demo.cpp```
+## TODO
+* Implement a more efficient matrix multiplication algorithm
 
