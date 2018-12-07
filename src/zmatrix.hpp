@@ -40,6 +40,8 @@ namespace matrix {
 
         T* operator[](size_t i);
 
+        T& at(size_t i, size_t j);
+
         T at(size_t i, size_t j) const;
 
         size_t size() const;
@@ -117,6 +119,13 @@ namespace matrix {
     template <typename T, size_t M, size_t N>
     std::pair<size_t, size_t> ZMatrix<T, M, N>::dim() const {
         return {M, N};
+    }
+
+    template <typename T, size_t M, size_t N>
+    T& ZMatrix<T, M, N>::at(size_t i, size_t j) {
+        assert(i < M);
+        assert(j < N);
+        return mat[i * N + j];
     }
 
     template <typename T, size_t M, size_t N>
