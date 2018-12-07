@@ -21,4 +21,5 @@ Other features:
 
 ## TODO
 * Implement a more efficient matrix multiplication algorithm
-
+* `det()` function to calculate determinant
+* `t()` function to get transpose
