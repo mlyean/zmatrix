@@ -2,6 +2,12 @@
 Integer matrix manipulation in C++
 
 ## Features
+ZMatrix can be initialized by:
+* Fill constructors
+    * Default constructor fills with zeros
+* `std::initializer_list`
+* Lambdas giving values of each entry
+
 ZMatrix supports basic matrix operations:
 * Addition (`+`)
 * Subtraction (`-`)
@@ -12,14 +18,18 @@ ZMatrix supports basic matrix operations:
 Note that inverses are not supported, since integer matrices are not closed under that operation.
 
 Other features:
-* Initialization using fill constructors and `std::initializer_list`s
 * Access specific entry (`mat[i][j]` / `mat.at(i, j)`)
 * `<<` overloading for putting to `std::ostream`
+* Get identity of square matrix using `eye`
+* Efficient repeated multiplication using overloaded `pow`
 
 ## Examples
-`demo.cpp` provides some example use cases. To compile it, simply run `g++ demo.cpp`.
+`demo.cpp` provides some example use cases.
+To compile it, simply run `g++ demo.cpp`.
 
 ## TODO
+* Implement `+=`, `-=`, `*=`
+* `t()` function to get transpose
 * Implement a more efficient matrix multiplication algorithm
 * `det()` function to calculate determinant
-* `t()` function to get transpose
+
