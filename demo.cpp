@@ -3,7 +3,7 @@
 
 // The matrices ZMatrix and IMatrix are declared in the namespace "matrix"
 // IMatrix is a specialization of ZMatrix
-using namespace matrix;
+using namespace zmatrix;
 
 int main() {
     // Declare matrix using initializer list

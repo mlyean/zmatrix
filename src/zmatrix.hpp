@@ -11,7 +11,7 @@
 #include <iostream>
 
 // Declarations
-namespace matrix {
+namespace zmatrix {
     template<typename T, size_t M, size_t N>
     class ZMatrix {
     private:
@@ -195,8 +195,8 @@ namespace matrix {
     using ISquareMatrix = IMatrix<N, N>;
 }
 
-namespace matrix {
-    // Implementation
+// Implementation
+namespace zmatrix {
     template <typename T, size_t M, size_t N>
     ZMatrix<T, M, N>::ZMatrix() : ZMatrix(0) {}
 
