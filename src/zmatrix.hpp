@@ -1,18 +1,17 @@
+/*
+ * zmatrix.hpp
+ * Purpose : Implement integer matrices with basic operations
+ *
+ * @author Lim Ming Yean (mlyean)
+ */
+
 #include <algorithm>
 #include <cassert>
-#include <iostream>
 #include <functional>
+#include <iostream>
 
+// Declarations
 namespace matrix {
-
-    /*
-     * class ZMatrix
-     * Implementation of integer matrices -
-     * useful(?) for representing linear transformations involving only integers.
-     *
-     * Integer matrices are not closed under multiplicative inverse,
-     * hence this operation is not supported.
-     */
     template<typename T, size_t M, size_t N>
     class ZMatrix {
     private:
@@ -20,44 +19,119 @@ namespace matrix {
         const size_t sz = M * N;
 
     public:
+        /*
+         * Default constructor. Initializes all entries to 0.
+         */
         ZMatrix();
 
-        ZMatrix(T);
+        /*
+         * Fill constructor. Fills all entries with the parameter.
+         * @param n : The value to fill with
+         */
+        ZMatrix(T n);
 
-        ZMatrix(T*);
+        /*
+         * Construct matrix from T array pointer.
+         * Does not check size.
+         * @param mat : Pointer to T array
+         */
+        ZMatrix(T* mat);
 
-        ZMatrix(std::initializer_list<T>);
+        /*
+         * Initializer list constructor.
+         * The initializer list must have exactly M*N elements.
+         * @param lst : Initializer list to use
+         */
+        ZMatrix(std::initializer_list<T> lst);
 
-        ZMatrix(const ZMatrix<T, M, N>&);
+        /*
+         * Copy constructor.
+         * @param a : ZMatrix to copy
+         */
+        ZMatrix(const ZMatrix<T, M, N>& a);
 
-        ZMatrix(ZMatrix<T, M, N>&&);
+        /*
+         * Move constructor
+         * @param a : ZMatrix to move
+         */
+        ZMatrix(ZMatrix<T, M, N>&& a);
 
-        ZMatrix<T, M, N>& operator=(const ZMatrix<T, M, N>&);
+        /*
+         * Copy assignment.
+         * @param a : ZMatrix to copy
+         */
+        ZMatrix<T, M, N>& operator=(const ZMatrix<T, M, N>& a);
 
-        ZMatrix<T, M, N>& operator=(ZMatrix<T, M, N>&&);
+        /*
+         * Move assignment.
+         * @param a : ZMatrix to move
+         */
+        ZMatrix<T, M, N>& operator=(ZMatrix<T, M, N>&& a);
 
+        /*
+         * Destructor
+         */
         ~ZMatrix();
 
+        /*
+         * Return ith row.
+         * @param i : Row to return
+         */
         T* operator[](size_t i);
 
+        /*
+         * Return reference to entry at position (i, j).
+         * @param i : Row number
+         * @param j : Column number
+         */
         T& at(size_t i, size_t j);
 
+        /*
+         * Return entry at position (i, j).
+         * @param i : Row number
+         * @param j : Column number
+         */
         T at(size_t i, size_t j) const;
 
+        /*
+         * Return total number of elements of the matrix.
+         */
         size_t size() const;
 
+        /*
+         * Return dimensions of the matrix.
+         */
         std::pair<size_t, size_t> dim() const;
 
-        ZMatrix<T, M, N> operator+(const ZMatrix<T, M, N>&) const;
+        /*
+         * Return sum of this and a.
+         * @param a : ZMatrix to compute sum with
+         */
+        ZMatrix<T, M, N> operator+(const ZMatrix<T, M, N>& a) const;
 
-        ZMatrix<T, M, N> operator-(const ZMatrix<T, M, N>&) const;
+        /*
+         * Return difference of this and a.
+         * @param a : ZMatrix to compute difference with
+         */
+        ZMatrix<T, M, N> operator-(const ZMatrix<T, M, N>& a) const;
 
+        /*
+         * Return the negation of this.
+         */
         ZMatrix<T, M, N> operator-() const;
 
-        ZMatrix<T, M, N> operator*(T) const;
+        /*
+         * Return the (right) scalar product with a constant.
+         * @param n : Constant to multiply
+         */
+        ZMatrix<T, M, N> operator*(T n) const;
 
+        /*
+         * Return the product of left-multiplying another matrix a.
+         * @param a : The matrix to left-multiply
+         */
         template<size_t P>
-        ZMatrix<T, M, P> operator*(const ZMatrix<T, N, P>&) const;
+        ZMatrix<T, M, P> operator*(const ZMatrix<T, N, P>& a) const;
 
         template<typename U, size_t P, size_t Q>
         friend class ZMatrix;
@@ -66,6 +140,63 @@ namespace matrix {
         friend bool operator==(const ZMatrix<U, P, Q>&, const ZMatrix<U, P, Q>&);
     };
 
+    /*
+     * Return the (right) scalar product with a constant.
+     * @param n : Constant to multiply
+     * @param a : ZMatrix to multiply
+     */
+    template<typename T, size_t M, size_t N>
+    ZMatrix<T, M, N> operator*(T n, const ZMatrix<T, M, N>& a);
+
+    /*
+     * Put the matrix to os
+     * @param os : ostream to put to
+     * @param a : ZMatrix to put
+     */
+    template<typename T, size_t M, size_t N>
+    std::ostream& operator<<(std::ostream& os, const ZMatrix<T, M, N> a);
+
+    /*
+     * Check for equality between matrices
+     * @param a : A ZMatrix
+     * @param b : Another ZMatrix
+     */
+    template <typename T, size_t M, size_t N>
+    bool operator==(const ZMatrix<T, M, N>& a, const ZMatrix<T, M, N>& b);
+
+    /*
+     * Check for inequality between matrices
+     * @param a : A ZMatrix
+     * @param b : Another ZMatrix
+     */
+    template <typename T, size_t M, size_t N>
+    bool operator!=(const ZMatrix<T, M, N>& a, const ZMatrix<T, M, N>& b);
+
+    // Aliases
+    template<typename T, size_t N>
+    using NVectorC = ZMatrix<T, N, 1>;
+
+    template<typename T, size_t N>
+    using NVectorR = ZMatrix<T, 1, N>;
+
+    template<typename T, size_t N>
+    using NSquareMatrix = ZMatrix<T, N, N>;
+
+    template<size_t M, size_t N>
+    using IMatrix = ZMatrix<int, M, N>;
+
+    template<size_t N>
+    using IVectorC = IMatrix<N, 1>;
+
+    template<size_t N>
+    using IVectorR = IMatrix<1, N>;
+
+    template<size_t N>
+    using ISquareMatrix = IMatrix<N, N>;
+}
+
+namespace matrix {
+    // Implementation
     template <typename T, size_t M, size_t N>
     ZMatrix<T, M, N>::ZMatrix() : ZMatrix(0) {}
 
@@ -182,7 +313,6 @@ namespace matrix {
         return prod;
     }
 
-
     template<typename T, size_t M, size_t N>
     ZMatrix<T, M, N> operator*(T n, const ZMatrix<T, M, N>& a) {
         return a * n;
@@ -209,26 +339,4 @@ namespace matrix {
     bool operator!=(const ZMatrix<T, M, N>& a, const ZMatrix<T, M, N>& b) {
         return !(a == b);
     }
-
-    template<typename T, size_t N>
-    using NVectorC = ZMatrix<T, N, 1>;
-
-    template<typename T, size_t N>
-    using NVectorR = ZMatrix<T, 1, N>;
-
-    template<typename T, size_t N>
-    using NSquareMatrix = ZMatrix<T, N, N>;
-
-    template<size_t M, size_t N>
-    using IMatrix = ZMatrix<int, M, N>;
-
-    template<size_t N>
-    using IVectorC = IMatrix<N, 1>;
-
-    template<size_t N>
-    using IVectorR = IMatrix<1, N>;
-
-    template<size_t N>
-    using ISquareMatrix = IMatrix<N, N>;
-
 }
