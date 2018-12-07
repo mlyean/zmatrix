@@ -28,7 +28,7 @@ namespace zmatrix {
          * Fill constructor. Fills all entries with the parameter.
          * @param n : The value to fill with
          */
-        ZMatrix(T n);
+        explicit ZMatrix(T n);
 
         /*
          * Construct matrix from T array pointer.
@@ -43,6 +43,12 @@ namespace zmatrix {
          * @param lst : Initializer list to use
          */
         ZMatrix(std::initializer_list<T> lst);
+
+        /*
+         * Construct matrix using lambda providing values at each position
+         * @param func : Lambda with parameters i and j, returning the value at position (i, j)
+         */
+        explicit ZMatrix(std::function<T(size_t, size_t)> func);
 
         /*
          * Copy constructor.
@@ -149,7 +155,7 @@ namespace zmatrix {
     ZMatrix<T, M, N> operator*(T n, const ZMatrix<T, M, N>& a);
 
     /*
-     * Put the matrix to os
+     * Put the matrix to os.
      * @param os : ostream to put to
      * @param a : ZMatrix to put
      */
@@ -157,7 +163,7 @@ namespace zmatrix {
     std::ostream& operator<<(std::ostream& os, const ZMatrix<T, M, N> a);
 
     /*
-     * Check for equality between matrices
+     * Check for equality between matrices.
      * @param a : A ZMatrix
      * @param b : Another ZMatrix
      */
@@ -165,12 +171,26 @@ namespace zmatrix {
     bool operator==(const ZMatrix<T, M, N>& a, const ZMatrix<T, M, N>& b);
 
     /*
-     * Check for inequality between matrices
+     * Check for inequality between matrices.
      * @param a : A ZMatrix
      * @param b : Another ZMatrix
      */
     template <typename T, size_t M, size_t N>
     bool operator!=(const ZMatrix<T, M, N>& a, const ZMatrix<T, M, N>& b);
+
+    /*
+     * Return n by n identity matrix
+     */
+    template <typename T, size_t N>
+    ZMatrix<T, N, N> eye();
+
+    /*
+     * Raise base to a given power.
+     * @param base : A ZMatrix
+     * @param exponent : A positive integer
+     */
+    template <typename T, size_t N>
+    ZMatrix<T, N, N> pow(const ZMatrix<T, N, N>& base, size_t exponent);
 
     // Aliases
     template<typename T, size_t N>
@@ -212,6 +232,15 @@ namespace zmatrix {
     ZMatrix<T, M, N>::ZMatrix(std::initializer_list<T> lst) : mat(new T[M * N]) {
         assert(lst.size() == sz);
         std::copy(lst.begin(), lst.end(), mat);
+    }
+
+    template <typename T, size_t M, size_t N>
+    ZMatrix<T, M, N>::ZMatrix(std::function<T(size_t, size_t)> func) : mat(new T[M * N]) {
+        for (size_t i = 0; i < M; i++) {
+            for (size_t j = 0; j < N; j++) {
+                mat[i * N + j] = func(i, j);
+            }
+        }
     }
 
     template <typename T, size_t M, size_t N>
@@ -338,5 +367,22 @@ namespace zmatrix {
     template <typename T, size_t M, size_t N>
     bool operator!=(const ZMatrix<T, M, N>& a, const ZMatrix<T, M, N>& b) {
         return !(a == b);
+    }
+
+    template <typename T, size_t N>
+    ZMatrix<T, N, N> eye() {
+        return ZMatrix<T, N, N>([](size_t i, size_t j) -> T { return i == j ? 1 : 0; });
+    }
+
+    template <typename T, size_t N>
+    ZMatrix<T, N, N> pow(const ZMatrix<T, N, N>& base, size_t exponent) {
+        ZMatrix<T, N, N> ret(eye<T, N>());
+        ZMatrix<T, N, N> cur(base);
+
+        for (; exponent > 0; exponent >>= 1) {
+            if (exponent & 1) ret = ret * cur;
+            cur = cur * cur;
+        }
+        return ret;
     }
 }
