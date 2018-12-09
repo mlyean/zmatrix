@@ -16,7 +16,7 @@ namespace zmatrix {
     class ZMatrix {
     private:
         T* mat;
-        const size_t sz = M * N;
+        static constexpr size_t sz = M * N;
 
     public:
         /*
@@ -102,12 +102,12 @@ namespace zmatrix {
         /*
          * Return total number of elements of the matrix.
          */
-        size_t size() const;
+        constexpr size_t size() const;
 
         /*
          * Return dimensions of the matrix.
          */
-        std::pair<size_t, size_t> dim() const;
+        constexpr std::pair<size_t, size_t> dim() const;
 
         /*
          * Return sum of this and a.
@@ -272,12 +272,12 @@ namespace zmatrix {
     }
 
     template <typename T, size_t M, size_t N>
-    size_t ZMatrix<T, M, N>::size() const {
+    constexpr size_t ZMatrix<T, M, N>::size() const {
         return sz;
     }
 
     template <typename T, size_t M, size_t N>
-    std::pair<size_t, size_t> ZMatrix<T, M, N>::dim() const {
+    constexpr std::pair<size_t, size_t> ZMatrix<T, M, N>::dim() const {
         return {M, N};
     }
 
