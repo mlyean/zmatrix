@@ -57,5 +57,17 @@ int main() {
     // Check equality
     std::cout << (mat == vec * rvec) << std::endl;
 
+    // pow overloading
+    ZMatrix<int, 3, 3> B {
+        1, 3, 0,
+        0, 1, -4,
+        1, 0, 1
+    };
+
+    std::cout << pow(B, 10) << std::endl;
+
+    ZMatrix<int, 3, 3> C;
+
+    std::cout << pow(C, 0) << std::endl;
     return 0;
 }
